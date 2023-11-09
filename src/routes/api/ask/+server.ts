@@ -7,6 +7,8 @@ import type { RequestHandler } from './$types';
 import type { OpenAiSettings } from '$misc/openai';
 import { error } from '@sveltejs/kit';
 import { getErrorMessage, throwIfUnset } from '$misc/error';
+// import OpenAI from 'openai';
+// import { OpenAIStream, StreamingTextResponse } from 'ai';
 
 // this tells Vercel to run this function as https://vercel.com/docs/concepts/functions/edge-functions
 export const config: Config = {
@@ -33,6 +35,19 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			stream: true
 		};
 
+		// const openai = new OpenAI({ apiKey: openAiKey });
+		// const result = await openai.chat.completions.create({
+		// 	model: 'gpt-3.5-turbo',
+		// 	messages, stream: true
+		// });
+		// const stream = OpenAIStream(result);
+		// return new StreamingTextResponse(stream);
+		// return result.toReadableStream()
+		// return new Response(result.toReadableStream(), {
+		// 	headers: {
+		// 		'Content-Type': 'text/event-stream'
+		// 	}
+		// });
 		// We'll disable the old API for now as it handles stuff quite differently..
 		// OpenAI will probably make old models available for the new API soon.
 		//
@@ -62,6 +77,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			}
 		});
 	} catch (err) {
+		console.log(err)
 		throw error(500, getErrorMessage(err));
 	}
 };
