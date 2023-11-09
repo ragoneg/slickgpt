@@ -285,7 +285,9 @@
 						// 	);
 						// }
 						input = msg;
-						handleSubmit();
+						setTimeout(() => {
+							handleSubmit();
+						}, 200);
 						// console.log('parent', parent);
 						// chatStore.addMessageToChat(
 						// 	slug,
