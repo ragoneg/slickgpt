@@ -1,8 +1,14 @@
 <script lang="ts">
 	import type { ChatCompletionMessageParam } from 'openai/resources/chat';
-	import { onDestroy, tick } from 'svelte';
+	import { onDestroy, onMount, tick } from 'svelte';
 	import { textareaAutosizeAction } from 'svelte-legos';
-	import { focusTrap, getModalStore, getToastStore } from '@skeletonlabs/skeleton';
+	import {
+		LightSwitch,
+		SlideToggle,
+		focusTrap,
+		getModalStore,
+		getToastStore
+	} from '@skeletonlabs/skeleton';
 	import { CodeBracket, PaperAirplane, CircleStack } from '@inqling/svelte-icons/heroicon-24-solid';
 	import {
 		type ChatCost,
@@ -20,6 +26,9 @@
 		settingsStore
 	} from '$misc/stores';
 	import { countTokens } from '$misc/openai';
+	import Record from './Record.svelte';
+	import Vision from './Vision.svelte';
+	import ImageGeneration from './ImageGeneration.svelte';
 
 	export let slug: string;
 	export let chatCost: ChatCost | null;
@@ -34,6 +43,8 @@
 
 	let isEditMode = false;
 	let originalMessage: ChatMessage | null = null;
+
+	let voiceOn = false;
 
 	const modalStore = getModalStore();
 	const toastStore = getToastStore();
@@ -162,6 +173,10 @@
 		resetLiveAnswer();
 		lastUserMessage = null;
 		cancelEditMessage();
+		// console.log('message', messageToAdd);
+		// if (voiceOn) {
+		// 	speak(messageToAdd.content);
+		// }
 	}
 
 	function resetLiveAnswer() {
@@ -225,6 +240,19 @@
 		await tick();
 		textareaAutosizeAction(textarea);
 	}
+
+	async function speak(msg: string) {
+		const audio = new Audio();
+		const response = await fetch('/api/speak', {
+			method: 'POST',
+			body: JSON.stringify({ apiKey: $settingsStore.openAiApiKey, msg })
+		});
+		if (!response.body) return;
+		const blob = await response.blob();
+		const url = URL.createObjectURL(blob);
+		audio.src = url;
+		audio.play();
+	}
 </script>
 
 <footer
@@ -246,6 +274,40 @@
 					</button>
 				</div>
 			{/if}
+			<div class="flex items-center justify-end space-x-5">
+				<Record
+					on:recordVoice={({ detail: { msg } }) => {
+						let parent;
+						// if (currentMessages && currentMessages.length > 0) {
+						// 	parent = chatStore.getMessageById(
+						// 		currentMessages[currentMessages.length - 1].id,
+						// 		chat
+						// 	);
+						// }
+						input = msg;
+						setTimeout(() => {
+							console.log(message);
+							handleSubmit();
+						}, 5000);
+						// console.log('parent', parent);
+						// chatStore.addMessageToChat(
+						// 	slug,
+						// 	{ role: 'user', content: message },
+						// 	parent || undefined
+						// );
+					}}
+				/>
+				<SlideToggle name="Voice" label="Voice" bind:checked={voiceOn} />
+				<Vision
+					bind:input
+					on:visionMsgReturned={({ detail: { text } }) => {
+						console.log(text);
+						$liveAnswerStore.content = text;
+						addCompletionToChat();
+					}}
+				/>
+				<ImageGeneration bind:input />
+			</div>
 			<div class="grid">
 				<form use:focusTrap={!$isLoadingAnswerStore} on:submit|preventDefault={handleSubmit}>
 					<div class="grid grid-cols-[1fr_auto]">
