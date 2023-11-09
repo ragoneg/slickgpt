@@ -174,9 +174,9 @@
 		lastUserMessage = null;
 		cancelEditMessage();
 		// console.log('message', messageToAdd);
-		// if (voiceOn) {
-		// 	speak(messageToAdd.content);
-		// }
+		if (voiceOn) {
+			speak(messageToAdd.content);
+		}
 	}
 
 	function resetLiveAnswer() {
@@ -285,10 +285,7 @@
 						// 	);
 						// }
 						input = msg;
-						setTimeout(() => {
-							console.log(message);
-							handleSubmit();
-						}, 5000);
+						handleSubmit();
 						// console.log('parent', parent);
 						// chatStore.addMessageToChat(
 						// 	slug,

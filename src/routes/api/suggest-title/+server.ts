@@ -7,7 +7,6 @@ import type { RequestHandler } from './$types';
 import { OpenAiModel, defaultOpenAiSettings, type OpenAiSettings } from '$misc/openai';
 import { error } from '@sveltejs/kit';
 import { getErrorMessage, respondToClient, throwIfUnset } from '$misc/error';
-
 // this tells Vercel to run this function as https://vercel.com/docs/concepts/functions/edge-functions
 export const config: Config = {
 	runtime: 'edge'
