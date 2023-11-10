@@ -32,7 +32,7 @@
 	$: webManifest = pwaInfo ? pwaInfo.webManifest.linkTag : '';
 	inject({ mode: dev ? 'development' : 'production' });
 
-	hljs.addPlugin(new CopyButtonPlugin());
+	// hljs.addPlugin(new CopyButtonPlugin());
 
 	initializeStores();
 	setupSkeleton();
