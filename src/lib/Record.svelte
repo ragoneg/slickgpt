@@ -42,16 +42,7 @@
 			body: formData
 		});
 		const { msg } = await response.json();
-		console.log(msg);
-		// input = msg;
-		// console.log(msg);
 		input = msg;
-		// dispatch('recordVoice', { msg });
-		// if (voiceOn) {
-		// 	setTimeout(() => {
-		// 		handleSubmit();
-		// 	}, 2000);
-		// }
 	}
 
 	function stopRecording() {
@@ -68,7 +59,7 @@
 
 <button type="button" class="btn btn-sm ml-2" on:click={toggleRecording}>
 	{#if isRecording}
-		<Stop class="w-6 h-6" />
+		<Stop class="w-6 h-6 text-red-600" />
 	{:else}
 		<Microphone class="w-6 h-6" />
 	{/if}

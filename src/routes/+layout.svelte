@@ -14,7 +14,7 @@
 		setInitialClassState
 	} from '@skeletonlabs/skeleton';
 	import hljs from 'highlight.js';
-	import CopyButtonPlugin from 'highlightjs-copy';
+	import CopyButtonPlugin from 'highlight.js';
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	// see https://highlightjs.org/static/demo/ for options:
 	import 'highlight.js/styles/night-owl.css';
