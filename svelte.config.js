@@ -9,6 +9,9 @@ const config = {
 		}),
 		alias: {
 			$misc: 'src/misc'
+		},
+		serviceWorker: {
+			register: false
 		}
 	},
 	preprocess: [

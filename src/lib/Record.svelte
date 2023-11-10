@@ -3,6 +3,7 @@
 	import { Microphone, Stop } from '@inqling/svelte-icons/heroicon-24-solid';
 	import { createEventDispatcher } from 'svelte';
 
+	export let input: string;
 	let mediaRecorder: MediaRecorder;
 	let recordedAudio: BlobPart[] = [];
 	let isRecording = false;
@@ -44,7 +45,8 @@
 		console.log(msg);
 		// input = msg;
 		// console.log(msg);
-		dispatch('recordVoice', { msg });
+		input = msg;
+		// dispatch('recordVoice', { msg });
 		// if (voiceOn) {
 		// 	setTimeout(() => {
 		// 		handleSubmit();

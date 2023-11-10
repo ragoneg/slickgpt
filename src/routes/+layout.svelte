@@ -27,7 +27,9 @@
 	import CostModal from '$lib/Modals/CostModal.svelte';
 	import SuggestTitleModal from '$lib/Modals/SuggestTitleModal.svelte';
 	import { initializeStores } from '@skeletonlabs/skeleton';
+	import { pwaInfo } from 'virtual:pwa-info';
 
+	$: webManifest = pwaInfo ? pwaInfo.webManifest.linkTag : '';
 	inject({ mode: dev ? 'development' : 'production' });
 
 	hljs.addPlugin(new CopyButtonPlugin());
@@ -77,6 +79,8 @@
 	<meta name="twitter:image:alt" content={meta.imageAlt} />
 
 	<title>{meta.title}</title>
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+	{@html webManifest}
 </svelte:head>
 
 <AppShell
@@ -99,3 +103,7 @@
 <Toast />
 
 <Modal components={modalComponentRegistry} />
+
+{#await import('$lib/ReloadPrompt.svelte') then { default: ReloadPrompt }}
+	<ReloadPrompt />
+{/await}

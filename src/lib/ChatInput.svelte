@@ -9,7 +9,12 @@
 		getModalStore,
 		getToastStore
 	} from '@skeletonlabs/skeleton';
-	import { CodeBracket, PaperAirplane, CircleStack } from '@inqling/svelte-icons/heroicon-24-solid';
+	import {
+		CodeBracket,
+		PaperAirplane,
+		CircleStack,
+		Sparkles
+	} from '@inqling/svelte-icons/heroicon-24-solid';
 	import {
 		type ChatCost,
 		type ChatMessage,
@@ -45,6 +50,7 @@
 	let originalMessage: ChatMessage | null = null;
 
 	let voiceOn = false;
+	let imageUrl: string | undefined, selectedFile: File | undefined;
 
 	const modalStore = getModalStore();
 	const toastStore = getToastStore();
@@ -106,8 +112,19 @@
 			settings: chat.settings,
 			openAiKey: $settingsStore.openAiApiKey
 		};
-
-		$eventSourceStore.start(payload, handleAnswer, handleError, handleAbort);
+		if (input.startsWith('/image')) {
+			generateImage().then((html) => {
+				$liveAnswerStore.content = html;
+				addCompletionToChat();
+			});
+		} else if (!imageUrl) $eventSourceStore.start(payload, handleAnswer, handleError, handleAbort);
+		else {
+			uploadFile(input).then((text) => {
+				console.log(text);
+				$liveAnswerStore.content = text;
+				addCompletionToChat();
+			});
+		}
 		input = '';
 	}
 
@@ -243,6 +260,7 @@
 
 	async function speak(msg: string) {
 		const audio = new Audio();
+		$isLoadingAnswerStore = true;
 		const response = await fetch('/api/speak', {
 			method: 'POST',
 			body: JSON.stringify({ apiKey: $settingsStore.openAiApiKey, msg })
@@ -252,6 +270,47 @@
 		const url = URL.createObjectURL(blob);
 		audio.src = url;
 		audio.play();
+		$isLoadingAnswerStore = false;
+	}
+	function toBase64(file: File) {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.onload = () => resolve(reader.result);
+			reader.onerror = (error) => reject(error);
+		});
+	}
+	async function uploadFile(text: string) {
+		if (!selectedFile) return;
+		const base64 = await toBase64(selectedFile);
+		// await new Promise((resolve) => setTimeout(resolve, 5000));
+
+		const _response = await fetch('/api/vision', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ imageFile: base64, apiKey: $settingsStore.openAiApiKey, text })
+		});
+		const { msg } = await _response.json();
+		const _msg = msg.choices[0].message.content;
+		selectedFile = undefined;
+		imageUrl = undefined;
+		return _msg;
+	}
+	async function generateImage() {
+		const response = await fetch('/api/imageGeneration', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ msg: input, apiKey: $settingsStore.openAiApiKey })
+		});
+		const data = await response.json();
+		console.log(data);
+		// imageGeneratedUrl = data[0].url;
+		// promptImageGenereted = data[0].revised_prompt;
+		return `<img src="${data[0].url}" alt="${data[0].revised_prompt}" />`;
 	}
 </script>
 
@@ -275,37 +334,9 @@
 				</div>
 			{/if}
 			<div class="flex items-center justify-end space-x-5">
-				<Record
-					on:recordVoice={({ detail: { msg } }) => {
-						let parent;
-						// if (currentMessages && currentMessages.length > 0) {
-						// 	parent = chatStore.getMessageById(
-						// 		currentMessages[currentMessages.length - 1].id,
-						// 		chat
-						// 	);
-						// }
-						input = msg;
-						setTimeout(() => {
-							handleSubmit();
-						}, 200);
-						// console.log('parent', parent);
-						// chatStore.addMessageToChat(
-						// 	slug,
-						// 	{ role: 'user', content: message },
-						// 	parent || undefined
-						// );
-					}}
-				/>
+				<Record bind:input />
 				<SlideToggle name="Voice" label="Voice" bind:checked={voiceOn} />
-				<Vision
-					bind:input
-					on:visionMsgReturned={({ detail: { text } }) => {
-						console.log(text);
-						$liveAnswerStore.content = text;
-						addCompletionToChat();
-					}}
-				/>
-				<ImageGeneration bind:input />
+				<Vision bind:selectedFile bind:imageUrl />
 			</div>
 			<div class="grid">
 				<form use:focusTrap={!$isLoadingAnswerStore} on:submit|preventDefault={handleSubmit}>
