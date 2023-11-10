@@ -112,7 +112,8 @@
 			settings: chat.settings,
 			openAiKey: $settingsStore.openAiApiKey
 		};
-		if (input.startsWith('/image')) {
+		if (input.startsWith('image')) {
+			input = input.replace('image', '');
 			generateImage().then((html) => {
 				$liveAnswerStore.content = html;
 				addCompletionToChat();
