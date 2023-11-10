@@ -4,7 +4,7 @@ import { SvelteKitPWA } from '@vite-pwa/sveltekit'
 
 export default defineConfig({
 	define: {
-		__DATE__: `'${new Date().toISOString()}'`,
+		// __DATE__: `'${new Date().toISOString()}'`,
 		__RELOAD_SW__: false,
 		'process.env.NODE_ENV': process.env.NODE_ENV === 'production' ? '"production"' : '"development"',
 	},
