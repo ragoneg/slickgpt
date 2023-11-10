@@ -21,7 +21,11 @@ export default defineConfig({
 			sourcemap: true
 		},
 		devOptions: {
-			enabled: true
+			enabled: true,
+			type: 'module'
+		},
+		kit: {
+
 		}
 	})]
 });
