@@ -16,39 +16,39 @@ export default defineConfig({
 		scope: '/',
 		base: '/',
 		selfDestroying: process.env.SELF_DESTROYING_SW === 'true',
-		// manifest: {
-		// 	short_name: 'GPT PWA',
-		// 	name: 'GPT PWA',
-		// 	start_url: '/',
-		// 	scope: '/',
-		// 	display: 'standalone',
-		// 	theme_color: "#ffffff",
-		// 	background_color: "#ffffff",
-		// 	icons: [
-		// 		{
-		// 			src: '/pwa-192x192.png',
-		// 			sizes: '192x192',
-		// 			type: 'image/png',
-		// 		},
-		// 		{
-		// 			src: '/pwa-512x512.png',
-		// 			sizes: '512x512',
-		// 			type: 'image/png',
-		// 		},
-		// 		{
-		// 			src: '/pwa-512x512.png',
-		// 			sizes: '512x512',
-		// 			type: 'image/png',
-		// 			purpose: 'any maskable',
-		// 		},
-		// 	],
-		// },
-		// injectManifest: {
-		// 	globPatterns: ['client/**/*.{js,css,ico,png,svg,webp,woff,woff2}']
-		// },
-		injectManifest: {
-			injectionPoint: undefined
+		manifest: {
+			short_name: 'GPT PWA',
+			name: 'GPT PWA',
+			start_url: '/',
+			scope: '/',
+			display: 'standalone',
+			theme_color: "#ffffff",
+			background_color: "#ffffff",
+			icons: [
+				{
+					src: '/pwa-192x192.png',
+					sizes: '192x192',
+					type: 'image/png',
+				},
+				{
+					src: '/pwa-512x512.png',
+					sizes: '512x512',
+					type: 'image/png',
+				},
+				{
+					src: '/pwa-512x512.png',
+					sizes: '512x512',
+					type: 'image/png',
+					purpose: 'any maskable',
+				},
+			],
 		},
+		injectManifest: {
+			globPatterns: ['client/**/*.{js,css,ico,png,svg,webp,woff,woff2}']
+		},
+		// injectManifest: {
+		// 	injectionPoint: undefined
+		// },
 		workbox: {
 			globPatterns: ['client/**/*.{js,css,ico,png,svg,webp,woff,woff2}'],
 			cleanupOutdatedCaches: true,
