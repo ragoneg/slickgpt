@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ChatCompletionMessageParam } from 'openai/resources/chat';
 	import { onDestroy, onMount, tick } from 'svelte';
-	import { textareaAutosizeAction } from 'svelte-legos';
+	import { messagesStore, textareaAutosizeAction } from 'svelte-legos';
 	import {
 		LightSwitch,
 		SlideToggle,
@@ -13,7 +13,8 @@
 		CodeBracket,
 		PaperAirplane,
 		CircleStack,
-		Sparkles
+		Sparkles,
+		QueueList
 	} from '@inqling/svelte-icons/heroicon-24-solid';
 	import {
 		type ChatCost,
@@ -30,11 +31,10 @@
 		enhancedLiveAnswerStore,
 		settingsStore
 	} from '$misc/stores';
-	import { countTokens } from '$misc/openai';
+	import { OpenAiModel, countTokens } from '$misc/openai';
 	import Record from './Record.svelte';
 	import Vision from './Vision.svelte';
-	import ImageGeneration from './ImageGeneration.svelte';
-
+	import { ChatCompletionStream } from 'openai/lib/ChatCompletionStream';
 	export let slug: string;
 	export let chatCost: ChatCost | null;
 
@@ -79,7 +79,7 @@
 	$: maxTokensCompletion = chat.settings.max_tokens;
 	// $: showTokenWarning = maxTokensCompletion > tokensLeft;
 
-	function handleSubmit() {
+	async function handleSubmit() {
 		isLoadingAnswerStore.set(true);
 		inputCopy = input;
 
@@ -118,17 +118,62 @@
 				$liveAnswerStore.content = html;
 				addCompletionToChat();
 			});
-		} else if (!imageUrl) $eventSourceStore.start(payload, handleAnswer, handleError, handleAbort);
-		else {
+		} else if (!imageUrl) {
+			// if (imageUrl && selectedFile) {
+			// 	const base64 = (await toBase64(selectedFile)) as string;
+			// 	payload.settings.model = 'gpt-4-vision-preview' as OpenAiModel;
+			// 	if (payload.messages && payload.messages?.length > 0 && payload.messages.at(-1)?.content) {
+			// 		const lastMessage = payload.messages.at(-1);
+			// 		if (lastMessage?.content) {
+			// 			lastMessage.content = [
+			// 				{ type: 'text', text: lastMessage.content },
+			// 				{ type: 'image_url', image_url: { url: base64 } }
+			// 			] as any[];
+			// 		}
+			// 	}
+			// 	console.log(payload);
+			// }
+			const res = await fetch('/api/ask', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(payload)
+			});
+			const runner = ChatCompletionStream.fromReadableStream(res.body!);
+			runner.on('content', (delta, snapshot) => {
+				// console.log(delta);
+				liveAnswerStore.update((store) => {
+					const answer = { ...store };
+					answer.content += delta;
+					return answer;
+				});
+				// process..stdout.write(delta);
+				// or, in a browser, you might display like this:
+				// document.body.innerText += delta; // or:
+				// document.body.innerText = snapshot;
+			});
+			runner.on('finalMessage', (message) => addCompletionToChat());
+			// runner.on('chatCompletion', (snaphost) => {
+			// 	console.log('ChatCompletion', snaphost);
+			// });
+			// runner.on('finalContent', (contentSnapshot) => addCompletionToChat());
+
+			// $eventSourceStore.start(payload, handleAnswer, handleError, handleAbort);
+		} else {
 			uploadFile(input).then((text) => {
-				console.log(text);
-				$liveAnswerStore.content = text;
-				addCompletionToChat();
+				if (text) {
+					console.log(text);
+					$liveAnswerStore.content = text;
+					addCompletionToChat();
+				}
 			});
 		}
 		input = '';
 	}
-
+	async function clearContext() {
+		chatStore.updateChat(slug, { ...chat, messages: [] });
+	}
 	function handleAnswer(event: MessageEvent<any>) {
 		try {
 			// streaming...
@@ -259,12 +304,12 @@
 		textareaAutosizeAction(textarea);
 	}
 
-	async function speak(msg: string) {
+	async function speak(input: string) {
 		const audio = new Audio();
 		$isLoadingAnswerStore = true;
 		const response = await fetch('/api/speak', {
 			method: 'POST',
-			body: JSON.stringify({ apiKey: $settingsStore.openAiApiKey, msg })
+			body: JSON.stringify({ apiKey: $settingsStore.openAiApiKey, input })
 		});
 		if (!response.body) return;
 		const blob = await response.blob();
@@ -295,9 +340,10 @@
 		});
 		const { msg } = await _response.json();
 		const _msg = msg.choices[0].message.content;
+		const imgTag = `<img src="${imageUrl}" alt="${_msg}" />`;
 		selectedFile = undefined;
 		imageUrl = undefined;
-		return _msg;
+		return `${imgTag}${_msg}`;
 	}
 	async function generateImage() {
 		const response = await fetch('/api/imageGeneration', {
@@ -335,6 +381,9 @@
 				</div>
 			{/if}
 			<div class="flex items-center justify-end space-x-5">
+				<button on:click={clearContext}>
+					<QueueList class="w-6 h-6" />
+				</button>
 				<Record bind:input />
 				<SlideToggle name="Voice" label="Voice" bind:checked={voiceOn} />
 				<Vision bind:selectedFile bind:imageUrl />

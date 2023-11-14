@@ -12,8 +12,11 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 
     const url = imageFile
     // const vision_text = url;
-    const vision_text = await openai.chat.completions.create({
+    const response = await openai.chat.completions.create({
         model: "gpt-4-vision-preview",
+        // model: "gpt-4-1106-preview",
+        stream: false,
+        max_tokens: 2048,
         messages: [
             {
                 role: "user",
@@ -23,20 +26,19 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
                         type: "image_url",
                         image_url: {
                             url
-                            //   url: f"data:image/jpeg;base64,{base64_image}"
                         }
                     },
                 ],
             },
         ],
-    })
+    });
     // const msg = ''
     // const buffer = Buffer.from(await mp3.arrayBuffer());
-    // return new Response(buffer, {
+    // return new Response(response.choices, {
     //     headers: {
-    //         'Content-Type': 'audio/mpeg'
+    //         'Content-Type': 'text/event-stream'
     //     }
     // })
-    console.log(vision_text.choices[0].message.content)
-    return json({ msg: vision_text })
+    // console.log(vision_text.choices[0].message.content)
+    return json({ msg: response })
 }

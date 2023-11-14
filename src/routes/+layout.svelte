@@ -1,7 +1,7 @@
 <script lang="ts">
 	import 'highlightjs-copy/dist/highlightjs-copy.min.css';
 	import '../app.postcss';
-	import { inject } from '@vercel/analytics';
+	// import { inject } from '@vercel/analytics';
 
 	import { dev } from '$app/environment';
 	import {
@@ -30,7 +30,7 @@
 	import { pwaInfo } from 'virtual:pwa-info';
 
 	$: webManifest = pwaInfo ? pwaInfo.webManifest.linkTag : '';
-	inject({ mode: dev ? 'development' : 'production' });
+	// inject({ mode: dev ? 'development' : 'production' });
 
 	// hljs.addPlugin(new CopyButtonPlugin());
 
@@ -96,6 +96,9 @@
 
 	<svelte:fragment slot="footer">
 		<Footer />
+		{#await import('$lib/ReloadPrompt.svelte') then { default: ReloadPrompt }}
+			<ReloadPrompt />
+		{/await}
 	</svelte:fragment>
 </AppShell>
 
@@ -103,7 +106,3 @@
 <Toast />
 
 <Modal components={modalComponentRegistry} />
-
-{#await import('$lib/ReloadPrompt.svelte') then { default: ReloadPrompt }}
-	<ReloadPrompt />
-{/await}

@@ -7,6 +7,7 @@ import type { RequestHandler } from './$types';
 import type { OpenAiSettings } from '$misc/openai';
 import { error } from '@sveltejs/kit';
 import { getErrorMessage, throwIfUnset } from '$misc/error';
+import OpenAI from 'openai';
 // import OpenAI from 'openai';
 // import { OpenAIStream, StreamingTextResponse } from 'ai';
 
@@ -34,12 +35,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			messages,
 			stream: true
 		};
-
-		// const openai = new OpenAI({ apiKey: openAiKey });
-		// const result = await openai.chat.completions.create({
-		// 	model: 'gpt-3.5-turbo',
-		// 	messages, stream: true
-		// });
+		const openai = new OpenAI({ apiKey: openAiKey });
+		const response = await openai.chat.completions.create(completionOpts);
 		// const stream = OpenAIStream(result);
 		// return new StreamingTextResponse(stream);
 		// return result.toReadableStream()
@@ -55,23 +52,24 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		// 	settings.model === OpenAiModel.Gpt35Turbo
 		// 		? 'https://api.openai.com/v1/chat/completions'
 		// 		: 'https://api.openai.com/v1/completions';
-		const apiUrl = 'https://api.openai.com/v1/chat/completions';
+		// const apiUrl = 'https://api.openai.com/v1/chat/completions';
 
-		const response = await fetch(apiUrl, {
-			headers: {
-				Authorization: `Bearer ${openAiKey}`,
-				'Content-Type': 'application/json'
-			},
-			method: 'POST',
-			body: JSON.stringify(completionOpts)
-		});
+		// const response = await fetch(apiUrl, {
+		// 	headers: {
+		// 		Authorization: `Bearer ${openAiKey}`,
+		// 		'Content-Type': 'application/json'
+		// 	},
+		// 	method: 'POST',
+		// 	body: JSON.stringify(completionOpts)
+		// });
 
-		if (!response.ok) {
-			const err = await response.json();
-			throw err.error;
-		}
 
-		return new Response(response.body, {
+		// if (!response.) {
+		// 	const err = await response.json();
+		// 	throw err.error;
+		// }
+
+		return new Response(response.toReadableStream(), {
 			headers: {
 				'Content-Type': 'text/event-stream'
 			}

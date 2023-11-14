@@ -3,6 +3,7 @@ import { writable, type Readable, type Writable, readable, get, derived } from '
 import { localStorageStore } from '@skeletonlabs/skeleton';
 import { v4 as uuidv4 } from 'uuid';
 import { EventSource } from './eventSource';
+import { EventSource2 } from './eventSource2';
 import { ChatStorekeeper } from './chatStorekeeper';
 import type { Chat, ChatMessage, ClientSettings } from './shared';
 import { closeOpenedCodeTicks } from './markdownHelper';
@@ -33,6 +34,7 @@ export const isLoadingAnswerStore: Writable<boolean> = writable(false);
 export const isTimeagoInitializedStore: Writable<boolean> = writable(false);
 
 export const eventSourceStore: Readable<EventSource> = readable(new EventSource());
+export const eventSourceStore2: Readable<EventSource2> = readable(new EventSource2());
 
 /**
  * Custom chat store

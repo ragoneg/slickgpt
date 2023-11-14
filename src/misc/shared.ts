@@ -3,7 +3,7 @@ import { get } from 'svelte/store';
 import { defaultOpenAiSettings, OpenAiModel, type OpenAiSettings } from './openai';
 import type { ModalSettings, ToastSettings, ToastStore, ModalStore } from '@skeletonlabs/skeleton';
 import { generateSlug } from 'random-word-slugs';
-import vercelAnalytics from '@vercel/analytics';
+// import vercelAnalytics from '@vercel/analytics';
 
 import { goto } from '$app/navigation';
 import { chatStore, settingsStore } from './stores';
@@ -86,8 +86,8 @@ export async function suggestChatTitle(chat: Chat, openAiApiKey: string): Promis
 		chat.messages.length === 1
 			? chatStore.getCurrentMessageBranch(chat)
 			: chat.contextMessage?.content
-			? [chat.contextMessage, ...chat.messages]
-			: chat.messages;
+				? [chat.contextMessage, ...chat.messages]
+				: chat.messages;
 
 	const filteredMessages = messages?.slice(0, chat.contextMessage?.content ? 3 : 2).map(
 		(m) =>
@@ -129,7 +129,7 @@ export function track(action: string) {
 	if (PUBLIC_DISABLE_TRACKING === 'true') {
 		return;
 	}
-	vercelAnalytics.track(action);
+	// vercelAnalytics.track(action);
 }
 
 export function showToast(
