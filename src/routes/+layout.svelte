@@ -58,7 +58,7 @@
 
 	function setupSkeleton() {
 		// see https://github.com/skeletonlabs/skeleton/issues/905 - gotta do this with ssr = false
-		setInitialClassState();
+		// setInitialClassState();
 		// see https://www.skeleton.dev/utilities/codeblocks
 		storeHighlightJs.set(hljs);
 		// see https://www.skeleton.dev/utilities/popups
