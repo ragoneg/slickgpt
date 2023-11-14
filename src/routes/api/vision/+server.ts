@@ -1,6 +1,11 @@
+import type { Config } from "@sveltejs/adapter-vercel";
 import { json, type RequestHandler } from "@sveltejs/kit";
 import OpenAI from "openai";
 
+export const config: Config = {
+    runtime: 'edge',
+    maxDuration: 30000
+};
 export const POST: RequestHandler = async ({ request, fetch }) => {
     const { apiKey, imageFile, text } = await request.json()
     // const formData = await request.formData()

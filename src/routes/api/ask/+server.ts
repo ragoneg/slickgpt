@@ -13,7 +13,7 @@ import OpenAI from 'openai';
 
 // this tells Vercel to run this function as https://vercel.com/docs/concepts/functions/edge-functions
 export const config: Config = {
-	runtime: 'edge'
+	runtime: 'edge',
 };
 
 export const POST: RequestHandler = async ({ request, fetch }) => {
