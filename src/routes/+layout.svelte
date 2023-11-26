@@ -48,12 +48,12 @@
 
 	const meta = {
 		type: 'website',
-		title: 'SlickGPT',
+		title: 'GIOT-GPT',
 		url: 'https://slickgpt.vercel.app/',
 		description:
-			'SlickGPT is a light-weight "use-your-own-API-key" ChatGPT client written in Svelte. It offers GPT-4 integration, a userless share feature and other superpowers.',
+			'GIOT GPT is a light-weight "use-your-own-API-key" ChatGPT client written in Svelte. It offers GPT-4 integration, a userless share feature and other superpowers.',
 		image: '/logo-slickgpt.svg',
-		imageAlt: 'SlickGPT Logo'
+		imageAlt: 'GIOT-GPT Logo'
 	};
 
 	function setupSkeleton() {

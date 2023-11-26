@@ -5,8 +5,7 @@ import { vitePreprocess } from '@sveltejs/kit/vite';
 const config = {
 	kit: {
 		adapter: adapter({
-			runtime: 'nodejs18.x',
-			maxDuration: 20000
+			runtime: 'nodejs18.x'
 		}),
 		alias: {
 			$misc: 'src/misc'

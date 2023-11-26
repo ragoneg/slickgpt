@@ -82,6 +82,14 @@
 	}
 </script>
 
+<button
+	type="button"
+	class="btn variant-filled m-10"
+	on:click={() => {
+		goto('/translations');
+	}}>Real time translation</button
+>
+
 <div
 	class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 px-4 md:px-8"
 >

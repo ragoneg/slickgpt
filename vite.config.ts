@@ -61,5 +61,14 @@ export default defineConfig({
 		kit: {
 
 		}
-	})]
+	})],
+	optimizeDeps: {
+		include: ['@speechly/speech-recognition-polyfill'], // Include the problematic module
+	},
+	build: {
+		rollupOptions: {
+			// Define external dependencies here if necessary
+			external: ['@speechly/speech-recognition-polyfill']
+		},
+	}
 });

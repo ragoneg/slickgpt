@@ -8,11 +8,12 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
     const openai = new OpenAI({ apiKey });
 
 
-    const transcribe = await openai.audio.transcriptions.create({
-        model: "whisper-1",
-        file: audioFile,
-        response_format: "text"
-    })
+    // const transcribe = await openai.audio.transcriptions.create({
+    //     model: "whisper-1",
+    //     file: audioFile,
+    //     response_format: "text"
+    // })
+    const transcribe = 'good'
     console.log(transcribe)
     return json({ msg: transcribe })
 }

@@ -10,6 +10,8 @@ import { getErrorMessage, throwIfUnset } from '$misc/error';
 import OpenAI from 'openai';
 // import OpenAI from 'openai';
 // import { OpenAIStream, StreamingTextResponse } from 'ai';
+import { HttpsProxyAgent } from 'https-proxy-agent';
+import { PROXY_URL, OPENAI_API_KEY } from '$env/static/private';
 
 // this tells Vercel to run this function as https://vercel.com/docs/concepts/functions/edge-functions
 export const config: Config = {
@@ -35,7 +37,12 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			messages,
 			stream: true
 		};
-		const openai = new OpenAI({ apiKey: openAiKey });
+
+		const openai = new OpenAI({
+			// apiKey: OPENAI_API_KEY,
+			apiKey: openAiKey
+			// httpAgent: new HttpsProxyAgent(OPENAI_API_KEY)
+		});
 		const response = await openai.chat.completions.create(completionOpts);
 		// const stream = OpenAIStream(result);
 		// return new StreamingTextResponse(stream);

@@ -35,6 +35,7 @@
 	import Record from './Record.svelte';
 	import Vision from './Vision.svelte';
 	import { ChatCompletionStream } from 'openai/lib/ChatCompletionStream';
+	import Record2 from './Record2.svelte';
 	export let slug: string;
 	export let chatCost: ChatCost | null;
 
@@ -384,7 +385,8 @@
 				<button on:click={clearContext}>
 					<QueueList class="w-6 h-6" />
 				</button>
-				<Record bind:input />
+				<!-- <Record bind:input /> -->
+				<Record2 />
 				<SlideToggle name="Voice" label="Voice" bind:checked={voiceOn} />
 				<Vision bind:selectedFile bind:imageUrl />
 			</div>

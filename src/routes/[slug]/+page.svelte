@@ -190,7 +190,6 @@
 			</span>
 		</svelte:fragment>
 	</Toolbar>
-
 	<Chat {slug} on:editMessage={handleEditMessage}>
 		<svelte:fragment slot="additional-content-top">
 			<!-- Language hint -->
