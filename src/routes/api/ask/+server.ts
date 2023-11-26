@@ -10,8 +10,6 @@ import { getErrorMessage, throwIfUnset } from '$misc/error';
 import OpenAI from 'openai';
 // import OpenAI from 'openai';
 // import { OpenAIStream, StreamingTextResponse } from 'ai';
-import { HttpsProxyAgent } from 'https-proxy-agent';
-import { PROXY_URL, OPENAI_API_KEY } from '$env/static/private';
 
 // this tells Vercel to run this function as https://vercel.com/docs/concepts/functions/edge-functions
 export const config: Config = {
